@@ -104,7 +104,7 @@ public static class DateTimeWeekExtension
     /// This method is useful for aligning dates with the beginning of the week in different timezones.
     /// </remarks>
     [Pure]
-    public static System.DateTime ToStartOfCurrentTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
+    public static System.DateTime ToStartOfTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
         System.DateTime start = utcNow.ToTz(tzInfo).ToStartOfNextWeek().AddDays(-7).ToUtc(tzInfo);
         return start;
@@ -138,7 +138,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime start = utcNow.ToStartOfCurrentTzWeek(tzInfo).AddDays(-7);
+        System.DateTime start = utcNow.ToStartOfTzWeek(tzInfo).AddDays(-7);
         return start;
     }
 
@@ -152,7 +152,7 @@ public static class DateTimeWeekExtension
     /// This method finds the start of the next week in the specified timezone and subtracts one tick to align with the very end of the current week.
     /// </remarks>
     [Pure]
-    public static System.DateTime ToEndOfCurrentTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
+    public static System.DateTime ToEndOfTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
         System.DateTime end = utcNow.ToStartOfNextTzWeek(tzInfo).AddTicks(-1);
         return end;
@@ -167,7 +167,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime end = utcNow.ToStartOfCurrentTzWeek(tzInfo).AddTicks(-1);
+        System.DateTime end = utcNow.ToStartOfTzWeek(tzInfo).AddTicks(-1);
         return end;
     }
 
@@ -180,7 +180,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfNextTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime end = utcNow.ToEndOfCurrentTzWeek(tzInfo).AddDays(7);
+        System.DateTime end = utcNow.ToEndOfTzWeek(tzInfo).AddDays(7);
         return end;
     }
 
