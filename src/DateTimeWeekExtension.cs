@@ -21,7 +21,8 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfWeek(this System.DateTime datetime)
     {
-        return datetime.ToStartOf(UnitOfTime.Week);
+        System.DateTime result = datetime.ToStartOf(UnitOfTime.Week);
+        return result;
     }
 
     /// <summary>
@@ -35,7 +36,8 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfWeek(this System.DateTime datetime)
     {
-        return datetime.ToEndOf(UnitOfTime.Week);
+        System.DateTime result = datetime.ToEndOf(UnitOfTime.Week);
+        return result;
     }
 
     /// <summary>
@@ -49,7 +51,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfNextWeek(this System.DateTime datetime)
     {
-        var result = datetime.ToStartOfWeek().AddDays(7);
+        System.DateTime result = datetime.ToStartOfWeek().AddDays(7);
         return result;
     }
 
@@ -64,7 +66,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfPreviousWeek(this System.DateTime datetime)
     {
-        var result = datetime.ToStartOfWeek().AddDays(-7);
+        System.DateTime result = datetime.ToStartOfWeek().AddDays(-7);
         return result;
     }
 
@@ -79,7 +81,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfNextWeek(this System.DateTime datetime)
     {
-        var result = datetime.ToEndOfWeek().AddDays(7);
+        System.DateTime result = datetime.ToEndOfWeek().AddDays(7);
         return result;
     }
 
@@ -94,7 +96,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfPreviousWeek(this System.DateTime datetime)
     {
-        var result = datetime.ToEndOfWeek().AddDays(-7);
+        System.DateTime result = datetime.ToEndOfWeek().AddDays(-7);
         return result;
     }
 
@@ -126,7 +128,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfNextTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToStartOfTzWeek(tzInfo).AddDays(7);
+        System.DateTime result = utcNow.ToTz(tzInfo).ToStartOfNextWeek().ToUtc(tzInfo);
         return result;
     }
 
@@ -142,7 +144,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToStartOfTzWeek(tzInfo).AddDays(-7);
+        System.DateTime result = utcNow.ToTz(tzInfo).ToStartOfPreviousWeek().ToUtc(tzInfo);
         return result;
     }
 
@@ -171,7 +173,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToEndOfTzWeek(tzInfo).AddDays(-7);
+        System.DateTime result = utcNow.ToTz(tzInfo).ToEndOfPreviousWeek().ToUtc(tzInfo);
         return result;
     }
 
@@ -184,8 +186,8 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfNextTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime end = utcNow.ToEndOfTzWeek(tzInfo).AddDays(7);
-        return end;
+        System.DateTime result = utcNow.ToTz(tzInfo).ToEndOfNextWeek().ToUtc(tzInfo);
+        return result;
     }
 
     /// <summary>
