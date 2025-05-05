@@ -1,4 +1,4 @@
-# Contributing to Soenneker.Extensions.DateTime.Week
+﻿# Contributing to Soenneker.Extensions.DateTime.Week
 
 We're excited that you're interested in contributing!
 
