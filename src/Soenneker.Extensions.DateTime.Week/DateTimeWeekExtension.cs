@@ -16,7 +16,7 @@ public static class DateTimeWeekExtension
     /// <param name="datetime">The DateTime instance to be adjusted.</param>
     /// <returns>A new DateTime instance set to the first moment (00:00:00) of the week of the original DateTime.</returns>
     /// <remarks>
-    /// The start of the week is determined based on the system's culture settings, which typically consider Sunday or Monday as the first day of the week.
+    /// Weeks begin on Monday.
     /// </remarks>
     [Pure]
     public static System.DateTime ToStartOfWeek(this System.DateTime datetime)
@@ -71,10 +71,10 @@ public static class DateTimeWeekExtension
     }
 
     /// <summary>
-    /// Adjusts the specified DateTime to the end of the previous week.
+    /// Adjusts the specified DateTime to the end of the next week.
     /// </summary>
     /// <param name="datetime">The DateTime instance to be adjusted.</param>
-    /// <returns>A new DateTime instance set to the last moment of the week preceding the current week.</returns>
+    /// <returns>A new DateTime instance set to the last moment of the week following the current week.</returns>
     /// <remarks>
     /// This method subtracts 7 days from the current end of the week to find the end of the previous week.
     /// </remarks>
@@ -112,8 +112,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToStartOfWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, 0);
     }
 
     /// <summary>
@@ -128,8 +127,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfNextTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToStartOfNextWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, 1);
     }
 
     /// <summary>
@@ -144,8 +142,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToStartOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToStartOfPreviousWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, -1);
     }
 
     /// <summary>
@@ -160,8 +157,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToEndOfWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, 1).AddTicks(-1);
     }
 
     /// <summary>
@@ -173,8 +169,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfPreviousTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToEndOfPreviousWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, 0).AddTicks(-1);
     }
 
     /// <summary>
@@ -186,8 +181,7 @@ public static class DateTimeWeekExtension
     [Pure]
     public static System.DateTime ToEndOfNextTzWeek(this System.DateTime utcNow, System.TimeZoneInfo tzInfo)
     {
-        System.DateTime result = utcNow.ToTz(tzInfo).ToEndOfNextWeek().ToUtc(tzInfo);
-        return result;
+        return GetStartOfTzWeek(utcNow, tzInfo, 2).AddTicks(-1);
     }
 
     /// <summary>
@@ -212,8 +206,28 @@ public static class DateTimeWeekExtension
     [Pure]
     public static int ToUtcWeekNumber(this System.DateTime dateTime)
     {
-        Calendar cal = CultureInfo.InvariantCulture.Calendar;
-        int result = cal.GetWeekOfYear(dateTime, CalendarWeekRule.FirstFourDayWeek, DayOfWeek.Monday);
-        return result;
+        return ISOWeek.GetWeekOfYear(dateTime);
+    }
+
+    private static System.DateTime GetStartOfTzWeek(System.DateTime utc, System.TimeZoneInfo timeZoneInfo, int weekOffset)
+    {
+        System.DateTime utcInstant = utc.Kind == System.DateTimeKind.Utc
+            ? utc
+            : System.DateTime.SpecifyKind(utc, System.DateTimeKind.Utc);
+        System.DateTime local = System.TimeZoneInfo.ConvertTimeFromUtc(utcInstant, timeZoneInfo);
+        int daysSinceMonday = ((int)local.DayOfWeek - (int)System.DayOfWeek.Monday + 7) % 7;
+        System.DateTime boundary = local.Date.AddDays(-daysSinceMonday + weekOffset * 7);
+
+        while (timeZoneInfo.IsInvalidTime(boundary))
+            boundary = boundary.AddMinutes(1);
+
+        if (timeZoneInfo.IsAmbiguousTime(boundary))
+        {
+            System.TimeSpan[] offsets = timeZoneInfo.GetAmbiguousTimeOffsets(boundary);
+            System.TimeSpan chosenOffset = offsets[0] >= offsets[1] ? offsets[0] : offsets[1];
+            return System.DateTime.SpecifyKind(boundary - chosenOffset, System.DateTimeKind.Utc);
+        }
+
+        return System.TimeZoneInfo.ConvertTimeToUtc(boundary, timeZoneInfo);
     }
 }
