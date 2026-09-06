@@ -1,5 +1,4 @@
 using System;
-using System.Threading.Tasks;
 using Soenneker.Tests.Unit;
 
 namespace Soenneker.Extensions.DateTime.Week.Tests;
@@ -7,7 +6,7 @@ namespace Soenneker.Extensions.DateTime.Week.Tests;
 public class DateTimeWeekExtensionTests : UnitTest
 {
     [Test]
-    public async Task ToStartOfWeek_uses_monday()
+    public async global::System.Threading.Tasks.Task ToStartOfWeek_uses_monday()
     {
         var sunday = new System.DateTime(2026, 8, 30, 12, 0, 0, DateTimeKind.Utc);
 
@@ -17,7 +16,7 @@ public class DateTimeWeekExtensionTests : UnitTest
     }
 
     [Test]
-    public async Task ToUtcWeekNumber_uses_iso_week_year_boundary_rules()
+    public async global::System.Threading.Tasks.Task ToUtcWeekNumber_uses_iso_week_year_boundary_rules()
     {
         var value = new System.DateTime(2018, 12, 31, 0, 0, 0, DateTimeKind.Utc);
 
@@ -25,7 +24,7 @@ public class DateTimeWeekExtensionTests : UnitTest
     }
 
     [Test]
-    public async Task Time_zone_week_end_is_tick_before_next_local_monday()
+    public async global::System.Threading.Tasks.Task Time_zone_week_end_is_tick_before_next_local_monday()
     {
         var value = new System.DateTime(2026, 8, 26, 12, 0, 0, DateTimeKind.Utc);
 
